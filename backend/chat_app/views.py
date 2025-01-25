@@ -32,6 +32,7 @@ def my_inbox(request, user_id):
   ).order_by("-id")
 
   serializer = MessageSerializer(messages, many=True)
+  # print(serializer.data)
   return Response(serializer.data)
 
 

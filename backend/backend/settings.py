@@ -54,13 +54,13 @@ MIDDLEWARE = [
 ]
 
 # CORS_ALLOWED_ORIGINS :
-CORS_ALLOWED_ORIGINS = [config('CORS_ALLOWED_ORIGINS', cast=str), ]
+CORS_ALLOWED_ORIGINS = [config('CORS_ALLOWED_ORIGINS', cast=str), 'http://localhost:5173']
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [ 'GET', 'POST', 'OPTIONS', 'PUT', 'PATCH', 'DELETE',]
 
-CORS_ALLOW_HEADERS = ["accept", "user-agent", "content-type", "authorization", "x-csrftoken", "x-requested-with",]
+CORS_ALLOW_HEADERS = ["accept", "user-agent", "content-type", "Authorization", "x-csrftoken", "x-requested-with",]
 
 
 ROOT_URLCONF = 'backend.urls'
@@ -143,7 +143,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type
