@@ -1,8 +1,8 @@
 import axios from 'axios'
-import jwt_decode from 'jwt-decode'
+import {jwtDecode} from 'jwt-decode'
 import dayjs from 'dayjs'
 import { useContext } from 'react'
-import authContext from '../contexts'
+import authContext from '../contexts/AuthContext'
 
 
 const baseURL = import.meta.env.VITE_API_URL
@@ -16,7 +16,7 @@ const useAxios = () => {
   })
 
   axiosObj.interceptors.request.use(async (request) => {
-    const user = jwt_decode(authTokens?.access)
+    const user = jwtDecode(authTokens?.access)
     const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1
 
     if (!isExpired) {
@@ -30,7 +30,7 @@ const useAxios = () => {
     localStorage.setItem('authTokens', JSON.stringify(response.data))
 
     setAuthTokens(response.data)
-    setUser(jwt_decode(response.data.access))
+    setUser(jwtDecode(response.data.access))
 
     request.headers.Authorization = `Bearer ${response.data.access}`
 

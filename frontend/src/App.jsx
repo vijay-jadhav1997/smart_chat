@@ -13,6 +13,7 @@ import Footer from './components/Footer'
 
 import PrivateRoute from './utils/PrivateRoute'
 import { AuthProvider } from './contexts/AuthContext'
+import ChatBox from './components/ChatBox'
 
 
 function App() {
@@ -27,6 +28,14 @@ function App() {
           element={
             <PrivateRoute>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+
+        <Route path='/chat-box' 
+          element={
+            <PrivateRoute>
+              <ChatBox />
             </PrivateRoute>
           }
         />
