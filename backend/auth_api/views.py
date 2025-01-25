@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, logout
+from django.db.models import Q
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
@@ -9,7 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User, UserProfile
-from .serializers import MyTokenObtainPairSerializer, UserSignupSerializer, UserLoginSerializer
+from .serializers import MyTokenObtainPairSerializer, UserSignupSerializer, UserProfileSerializer, UserLoginSerializer
 
 
 #  To get tokenpair
@@ -48,3 +49,103 @@ def user_signup(request):
   }, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def user_login(request):
+
+  serializer = UserLoginSerializer(data=request.data)
+
+  if serializer.is_valid():
+    user = serializer.validated_data['user']
+
+    # print(type(user))
+
+    if user is not None:
+      refresh = RefreshToken.for_user(user)
+
+      return Response({
+        'status': 'success',
+        'message': f'Welcome {user.username}, you logged in successfully.',
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+        'user': {
+          'email': user.email,
+          'username': user.username,
+          'full_name': user.userprofile.full_name,
+          'dp_image': str(user.userprofile.dp_image),
+          'bio': user.userprofile.bio,
+          'mobile_number': user.userprofile.mobile_number
+        },
+        # 'user': user
+      }, status=status.HTTP_200_OK)
+
+  return Response({
+    'status': 'error',
+    'message': 'Invalid email or password.',
+    'errors': serializer.errors
+    }, status=status.HTTP_401_UNAUTHORIZED)
+
+
+
+# Logging out a user
+@api_view(['POST', 'OPTIONs'])
+def user_logout(request):
+  # print(request.data)
+  # logout(request)
+  try:
+    logout(request) 
+    refresh_token = request.data.get('refresh')
+    # print(refresh_token)
+    token = RefreshToken(refresh_token)
+    token.blacklist()
+    return Response({"message": "You Logged out successfully."}, status=status.HTTP_200_OK)
+  except Exception as e:
+    return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# User profile
+@api_view(['GET', 'POST', 'PUT'])
+@permission_classes([IsAuthenticated])
+def user_profile_view(request, pk):
+  try:
+    profile = UserProfile.objects.get(pk=pk)
+  except UserProfile.DoesNotExist:
+    return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+  if request.method == 'GET':
+    serializer = UserProfileSerializer(profile)
+    return Response(serializer.data)
+
+  if request.method == 'PUT':
+    if request.user != profile.user:
+      return Response({"detail": "You do not have permission to edit this profile."}, status=status.HTTP_403_FORBIDDEN)
+    
+    serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# search the users with username, full_name, or email
+@api_view(['GET'])
+def search_users(request, username):
+  logged_in_user = request.user
+  users = UserProfile.objects.filter(
+    Q(user__username__icontains=username) | 
+    Q(full_name__icontains=username) | 
+    Q(user__email__icontains=username)
+  ).exclude(user=logged_in_user)
+
+  if not users.exists():
+    return Response(
+      {"detail": "No users found."},
+      status=status.HTTP_404_NOT_FOUND
+    )
+
+  serializer = UserProfileSerializer(users, many=True)
+  return Response(serializer.data)

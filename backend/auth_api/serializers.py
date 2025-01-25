@@ -45,3 +45,33 @@ class UserSignupSerializer(serializers.ModelSerializer):
     user = User.objects.create_user(**validated_data)
     return user
   
+  
+# Serializer for user login
+class UserLoginSerializer(serializers.Serializer):
+  email = serializers.CharField(required=True)
+  password = serializers.CharField(required=True, write_only=True)
+
+  def validate(self, data):
+    user = authenticate(email=data.get('email'), password=data.get('password'))
+    if not user:
+      raise serializers.ValidationError('Invalid email and password.')
+    # attach the 'user' obj to validated_data for later use in views
+    data['user'] = user 
+    return data
+
+
+# User Profile serializer
+class UserProfileSerializer(serializers.ModelSerializer):
+
+  class Meta:
+    model = UserProfile
+    fields = [ 'id',  'user',  'full_name', 'dp_image', 'bio', 'mobile_number']
+  
+  def __init__(self, *args, **kwargs):
+    super(UserProfileSerializer, self).__init__(*args, **kwargs)
+    request = self.context.get('request')
+    if request and request.method == 'POST':
+      self.Meta.depth = 0
+    else:
+      self.Meta.depth = 3
+
