@@ -39,7 +39,7 @@ INSTALLED_APPS = [
 
     # internal
     'auth_api',
-    # 'chat_api',
+    'chat_app',
 ]
 
 MIDDLEWARE = [

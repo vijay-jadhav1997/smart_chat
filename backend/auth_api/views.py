@@ -133,12 +133,20 @@ def user_profile_view(request, pk):
 
 # search the users with username, full_name, or email
 @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
 def search_users(request, username):
   logged_in_user = request.user
+
+  if logged_in_user.is_anonymous:
+    return Response(
+      {"detail": "Authentication credentials were not provided."},
+      status=status.HTTP_401_UNAUTHORIZED
+    )
+  
   users = UserProfile.objects.filter(
     Q(user__username__icontains=username) | 
-    Q(full_name__icontains=username) | 
-    Q(user__email__icontains=username)
+    Q(full_name__icontains=username) 
+    # | Q(user__email__icontains=username)
   ).exclude(user=logged_in_user)
 
   if not users.exists():
