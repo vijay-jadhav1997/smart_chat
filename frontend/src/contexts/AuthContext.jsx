@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
       
       const data = await response.json()
 
-      console.log(data);
+      // console.log(data);
 
       // console.log("Logged In");
 

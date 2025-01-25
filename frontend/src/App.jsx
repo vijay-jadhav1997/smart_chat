@@ -14,6 +14,7 @@ import Footer from './components/Footer'
 import PrivateRoute from './utils/PrivateRoute'
 import { AuthProvider } from './contexts/AuthContext'
 import ChatBox from './components/ChatBox'
+import DetailedMessages from './components/DetailedMessages'
 
 
 function App() {
@@ -32,10 +33,10 @@ function App() {
           }
         />
 
-        <Route path='/chat-box' 
+        <Route path='/detailed-messages/:sender_id/' 
           element={
             <PrivateRoute>
-              <ChatBox />
+              <DetailedMessages />
             </PrivateRoute>
           }
         />
