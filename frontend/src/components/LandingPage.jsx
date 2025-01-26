@@ -1,6 +1,18 @@
-import { Link } from "react-router-dom"
+import { useContext, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import AuthContext from "../contexts/AuthContext"
+
 
 function LandingPage() {
+  const { user } = useContext(AuthContext) || null
+  // console.log(user);
+  
+  const navigate = useNavigate()
+
+  useEffect( () => {
+    user && navigate('/home')
+  },[])
+  
   return (
     <main className="bg-blue-100">
       <section className="py-10  sm:pt-16 lg:pt-24">

@@ -6,6 +6,10 @@ html {
   scrollbar-width: thin;
 }
 
+/* body {
+  background-color: #3b87f063;
+} */
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -22,10 +26,3 @@ img {
   text-decoration: underline;
   text-underline-offset: 10px;
 }
-
-/* #header {
-  border-radius: 10px;
-  margin: auto;
-  left: 50%;
-  transform: translateX(-50%);
-} */

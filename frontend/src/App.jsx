@@ -15,6 +15,8 @@ import PrivateRoute from './utils/PrivateRoute'
 import { AuthProvider } from './contexts/AuthContext'
 import ChatBox from './components/ChatBox'
 import DetailedMessages from './components/DetailedMessages'
+import LandingPage from './components/LandingPage'
+import HomePage from './components/HomePage'
 
 
 function App() {
@@ -33,15 +35,23 @@ function App() {
           }
         />
 
-        <Route path='/detailed-messages/:sender_id/' 
+        <Route path='/detailed-messages/:id/' 
           element={
             <PrivateRoute>
               <DetailedMessages />
             </PrivateRoute>
           }
         />
+
+        <Route path='/home' 
+          element={
+            <PrivateRoute>
+              <HomePage />
+            </PrivateRoute>
+          }
+        />
         
-        <Route path='' element={<Home />} />
+        <Route path='/' element={<LandingPage />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/login' element={<Login />} />
 

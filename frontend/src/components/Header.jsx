@@ -7,6 +7,7 @@ function Header() {
   const {user, logoutUser} = useContext(AuthContext)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+  // console.log(user);
 
   return (
     <>
@@ -16,7 +17,7 @@ function Header() {
           <div className="px-4 mx-auto sm:px-6 lg:px-8">
             <nav className="relative flex items-center justify-between h-16 lg:h-20">
               <div className="hidden lg:flex lg:items-center lg:space-x-10">
-                <NavLink to={''} title="Home" className={`${({isActive}) => (isActive ? 'active-link' : '')} text-base font-medium text-black`}> Home </NavLink>
+                <NavLink to={'/home'} title="Home" className={`${({isActive}) => (isActive ? 'active-link' : '')} text-base font-medium text-black`}> Home </NavLink>
 
                 <NavLink to={''} title="About" className={`${({isActive}) => (isActive ? 'active-link' : '')} text-base font-medium text-black`}> About </NavLink>
 
@@ -30,7 +31,7 @@ function Header() {
 
                 <NavLink to={'/profile'} title="" className="text-base font-medium text-black"> Profile </NavLink> */}
               </div>
-
+              
               <div className="lg:absolute lg:-translate-x-1/2 lg:inset-y-5 lg:left-1/2">
                 <div className="flex-shrink-0">
                   <NavLink to={'/'} title="" className="flex">
@@ -40,19 +41,26 @@ function Header() {
                 </div>
               </div>
 
-              <button type="button" onClick={() => setIsMenuOpen(!isMenuOpen)} className={`inline-flex p-2 ml-5 text-black transition-all duration-200 rounded-full hover:bg-slate-600 hover:text-white focus:bg-slate-800 ${isMenuOpen ? 'bg-gray-800/60 text-white focus:bg-red-500 hover:bg-red-600' : ''} lg:hidden focus:text-white`}>
-                {
-                  isMenuOpen 
-                  ?
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  :
-                  <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
-                  </svg>
+              <div className="flex items-center lg:hidden">
+                { 
+                  user && <span className="text-sm">Welcome <strong>{user?.username}</strong></span>
                 }
-              </button>
+                <button type="button" onClick={() => setIsMenuOpen(!isMenuOpen)} className={`inline-flex p-2 ml-6 text-black transition-all duration-200 rounded-full hover:bg-slate-600 hover:text-white focus:bg-slate-800 ${isMenuOpen ? 'bg-gray-800/60 text-white focus:bg-red-500 hover:bg-red-600' : ''} lg:hidden focus:text-white`}>
+                  {
+                    isMenuOpen 
+                    ?
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    :
+                    <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                  }
+                </button>
+              </div>
+
+
 
               <div className="hidden lg:flex lg:items-center lg:space-x-5">
                 {
@@ -62,7 +70,10 @@ function Header() {
                     <NavLink to={'/login'} title="Login here" className={`${({isActive}) => (isActive ? 'active-link' : '')} px-2 py-1 rounded-md text-base font-medium text-black hover:bg-white hover:text-green-600 transition-all duration-200`}> Login </NavLink>
                   </>
                   :
-                  <button onClick={() => logoutUser()} className="px-2 py-1 rounded-md text-base font-medium bg-rose-600 hover:text-rose-600 hover:bg-white text-white transition-all duration-200">Logout</button>
+                  <>
+                    <span className="px-2 text-sm">Welcome <strong>{user?.username}</strong></span>
+                    <button onClick={() => logoutUser()} className="px-2 py-1 rounded-md text-base font-medium bg-rose-600 hover:text-rose-600 hover:bg-white text-white transition-all duration-200">Logout</button>
+                  </>
                 }
 
                 {/* <NavLink to={''} title="" className="flex items-center justify-center w-10 h-10 text-white bg-black rounded-full">
@@ -76,11 +87,11 @@ function Header() {
         </div>
 
         {/*  xs to lg  */}
-        <nav className={`absolute right-0 top-[88%] py-4 w-[300px] h-screen transition-transform duration-200 backdrop-blur-md bg-gradient-to-r text-white from-fuchsia-600/70 to-blue-600/80 lg:hidden ${isMenuOpen ? '' : 'translate-x-[110%]'}`}>
+        <nav className={`absolute right-0 top-[88%] py-4 w-[300px] h-screen overflow-y-auto transition-transform duration-200 backdrop-blur-md bg-gradient-to-r text-white from-fuchsia-600/70 to-blue-600/80 lg:hidden ${isMenuOpen ? '' : 'translate-x-[110%]'}`}>
           <div className="px-4 mx-auto sm:px-6 lg:px-8">
             <div className='mt-2' onClick={() => setIsMenuOpen(!isMenuOpen) }>
               <div className="flex flex-col space-y-2">
-                <NavLink to={''} title="home" className="py-2 text-base text-center font-medium hover:bg-slate-200/40 transition-all duration-200 focus:text-blue-600"> Home </NavLink>
+                <NavLink to={'/home'} title="home" className="py-2 text-base text-center font-medium hover:bg-slate-200/40 transition-all duration-200 focus:text-blue-600"> Home </NavLink>
 
                 <NavLink to={''} title="about" className="py-2 text-base text-center font-medium hover:bg-slate-200/40 transition-all duration-200 focus:text-blue-600"> About </NavLink>
 

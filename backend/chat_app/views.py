@@ -1,15 +1,17 @@
 from django.shortcuts import render
-
-from rest_framework.decorators import api_view
-from rest_framework import status
-from rest_framework.response import Response
 from django.db.models import Subquery, OuterRef, Q
 
-from .models import Message
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.response import Response
+
 from auth_api.models import User, UserProfile
+from auth_api.serializers import UserProfileSerializer
+
+from .models import Message
 from .serializers import MessageSerializer
 
-from auth_api.serializers import UserProfileSerializer
 
 
 # Create your views here.
@@ -49,6 +51,7 @@ def get_messages(request, sender_id, reciever_id):
 
 # to send message
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def send_message(request):
   serializer = MessageSerializer(data=request.data)
   if serializer.is_valid():

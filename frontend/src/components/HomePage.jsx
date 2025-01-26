@@ -11,7 +11,7 @@ import { GoSidebarExpand } from "react-icons/go";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 
 
-function DetailedMessages() {
+function HomePage() {
   const [isLeftSidebarClosed, setIsLeftSidebarClosed] = useState(true)
   const [message, setMessage] = useState([])
   const [messages, setMessages] = useState([])
@@ -19,7 +19,7 @@ function DetailedMessages() {
   const [newMessage, setNewMessage] = useState('')
   const [newSearch, setNewSearch] = useState({search: ''})
 
-  const [user, setUser] = useState([])
+  const [users, setUsers] = useState([])
   const [profile, setProfile] = useState([])
 
   const baseURL = import.meta.env.VITE_API_URL
@@ -43,6 +43,21 @@ function DetailedMessages() {
   const navigate = useNavigate()
   
   // console.log(user_id === useParamsObj.id);
+
+  
+  useEffect(() => {
+    try {
+      axios.get(`${baseURL}/auth-api/users/`).then((res) => {
+        setUsers(res?.data)
+        // console.log(res.data);
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
+  console.log(users);
+  
   
   
   useEffect(() => {
@@ -56,42 +71,30 @@ function DetailedMessages() {
     }
    
     
-  }, [useParamsObj.id])
+  }, [])
   console.log(messages)
   
   
   // get conversion (messages) with
   useEffect(() => {
-    let interval = setInterval(() => {
-      try {
-        axios.get(`${baseURL}/chat-app/get-messages/${useParamsObj.id}/${user_id}/`).then((res) => {
-          setMessage(res.data)
-        })
-      } catch (error) {
-        console.error(error)
-      }
+    // let interval = setInterval(() => {
+      // try {
+      //   axios.get(`${baseURL}/chat-app/get-messages/${useParamsObj.id}/${user_id}/`).then((res) => {
+      //     setMessage(res.data)
+      //   })
+      // } catch (error) {
+      //   console.error(error)
+      // }
 
       
-    }, 5000)
+    // }, 5000)
 
-    return () => clearInterval(interval)
+    // return () => clearInterval(interval)
   }, [])
   
   console.log(message);
   console.log(newMessage);
   
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        await axios.get(`${baseURL}/auth-api/profile/${user_id}`).then((res) => {
-          setProfile()
-        })
-      } catch (error) {
-        console.error(error)
-      }
-    }
-  }, [])
 
 
   const handleSubmit = (e) => {
@@ -106,7 +109,7 @@ function DetailedMessages() {
     formData.append('is_read', false)
     
     try {
-      axios.post(`${baseURL}/chat-app/send-message/`, formData).then((res) => {
+      axios.post(`${baseURL}/chat-app/send-message/`, formData).then(() => {
         // setMessage((prev) => [...prev, res.data])
         setNewMessage('')
       })
@@ -143,33 +146,33 @@ function DetailedMessages() {
                   placeholder="Search users..."
                 />
               </div>
-              <p className='text-left pl-2 text-green-700 font-medium text-lg'>Recent messages...</p>
+              <p className='text-left pl-2 text-green-700 font-medium'>All users, you can chat with them...</p>
               <nav className="overflow-y-auto">
                 <ul className="py-2 flex flex-wrap md:flex-col justify-between px-2 md:px-0 gap-x-2 gap-y-4 md:gap-y-0">
 
                   {
-                    messages.length === 0 && <li className="mt-2 text-left pl-2">No messages, as of now...</li>
+                    users.length === 0 && <li className="mt-2 text-left pl-2">No users available, as of now...</li>
                   }
 
-                  {messages?.map((message) => {
+                  {users?.map((user) => {
                     return ( 
                       <Link 
-                        to={`/detailed-messages/${message?.sender?.id === user_id ? message.reciever.id : message?.sender?.id}/`}
-                        key={message?.id}
+                        to={`/detailed-messages/${user?.id}/`}
+                        key={user?.id}
                         className="py-2 px-1 rounded-md hover:bg-green-300 my-1 flex items-center"
                       >
                         <img
-                          src={`${baseURL}${message?.sender_profile?.dp_image}`}
+                          src={`${baseURL}${user?.dp_image}`}
                           className="w-12 h-12 p-[2px] rounded-full object-cover border"
                           alt="Vanessa Tucker"
                         />
                         
                         <div className="flex-grow-1 ml-3 font-medium text-left">
-                          {message?.sender?.username} 
+                          {user?.user?.username} 
                           <div className="text-xs font-normal">
-                            {message?.message.slice(0,20) + '...'}
+                            {user?.bio ? user?.bio?.slice(0,20) + '...' : "I'm using SmartChatBot..."}
                           </div>
-                        <span className="inline-block text-right ml-auto w-max text-xs font-extralight">{moment.utc(message.date).local().startOf('seconds').fromNow()}</span>
+                        <span className="inline-block text-right ml-auto w-max text-xs font-extralight">{moment.utc(user?.user?.last_login).local().startOf('seconds').fromNow()}</span>
                         </div>
                       </Link>
                     )
@@ -337,8 +340,65 @@ function DetailedMessages() {
 
         {/* Right Sidebar */}
         <aside className="bg-teal-100 mt-2 md:w-64 p-4 md:hidden lg:block">
-          <h2 className="font-bold">Right Sidebar</h2>
-          <p>Additional content goes here.</p>
+          <aside
+            className={`w-full mb-2 md:mb-0 rounded-sm transition-all duration-300 bg-blue-200  md:h-full ${
+              isLeftSidebarClosed ? "md:w-16 h-[60px]" : "md:w-64 h-[300px]"
+            } flex flex-col py-4 pl-2`}
+            style={{scrollbarWidth: 'thin'}}
+          >
+            <button
+              onClick={() => setIsLeftSidebarClosed(!isLeftSidebarClosed)}
+              className="mb-4 mr-2 bg-blue-500 text-lg text-white rounded p-2"
+            >
+              {isLeftSidebarClosed ? <GoSidebarCollapse className={`rotate-90 lg:rotate-0`} /> : <GoSidebarExpand className={`rotate-90 lg:rotate-0`} />}
+            </button>
+            {!isLeftSidebarClosed && (
+              <>
+
+                <div className="w-full">
+                  <input
+                    type="text"
+                    className="my-2 p-1 mx-auto focus:outline outline-blue-500 rounded-lg"
+                    placeholder="Search users..."
+                  />
+                </div>
+                <p className='text-left pl-2 text-green-700 font-medium text-lg'>Recent messages...</p>
+                <nav className="overflow-y-auto">
+                  <ul className="py-2 flex flex-wrap md:flex-col justify-between px-2 md:px-0 gap-x-2 gap-y-4 md:gap-y-0">
+
+                    {
+                      messages.length === 0 && <li className="mt-2 text-left pl-2">No messages, as of now...</li>
+                    }
+
+                    {messages?.map((message) => {
+                      return ( 
+                        <Link 
+                          to={`/detailed-messages/${message?.sender?.id === user_id ? message.reciever.id : message?.sender?.id}/`}
+                          key={message?.id}
+                          className="py-2 px-1 rounded-md hover:bg-green-300 my-1 flex items-center"
+                        >
+                          <img
+                            src={`${baseURL}${message?.sender_profile?.dp_image}`}
+                            className="w-12 h-12 p-[2px] rounded-full object-cover border"
+                            alt="Vanessa Tucker"
+                          />
+                          
+                          <div className="flex-grow-1 ml-3 font-medium text-left">
+                            {message?.sender?.username} 
+                            <div className="text-xs font-normal">
+                              {message?.message.slice(0,20) + '...'}
+                            </div>
+                          <span className="inline-block text-right ml-auto w-max text-xs font-extralight">{moment.utc(message.date).local().startOf('seconds').fromNow()}</span>
+                          </div>
+                        </Link>
+                      )
+                    })}
+                  </ul>
+                </nav>
+              </>
+
+            )}
+          </aside>
         </aside>
       </div>
 
@@ -346,4 +406,4 @@ function DetailedMessages() {
   )
 }
 
-export default DetailedMessages
+export default HomePage

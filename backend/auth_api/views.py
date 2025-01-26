@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User, UserProfile
-from .serializers import MyTokenObtainPairSerializer, UserSignupSerializer, UserProfileSerializer, UserLoginSerializer
+from .serializers import MyTokenObtainPairSerializer, UserSerializer, UserSignupSerializer, UserProfileSerializer, UserLoginSerializer
 
 
 #  To get tokenpair
@@ -105,6 +105,16 @@ def user_logout(request):
     return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Get All registered users
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_users(request):
+  try:
+    users = UserProfile.objects.all()
+    serializer = UserProfileSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+  except Exception as e :
+    return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # User profile
 @api_view(['GET', 'POST', 'PUT'])
@@ -156,4 +166,4 @@ def search_users(request, username):
     )
 
   serializer = UserProfileSerializer(users, many=True)
-  return Response(serializer.data)
+  return Response(serializer.data, status=status.HTTP_200_OK)

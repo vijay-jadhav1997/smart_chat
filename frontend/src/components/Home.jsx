@@ -6,7 +6,6 @@ import moment from 'moment'
 import AuthContext from "../contexts/AuthContext"
 import useAxios from "../utils/useAxios"
 
-import LandingPage from "./LandingPage"
 
 import { GoSidebarCollapse } from "react-icons/go";
 import { GoSidebarExpand } from "react-icons/go";
@@ -19,9 +18,10 @@ function Home() {
 
   const baseURL = import.meta.env.VITE_API_URL
 
+  const [users, setUsers] = useState([])
   const [message, setMessage] = useState([])
   const [messages, setMessages] = useState([])
-  const [newSearch, setNewSearch ] = useState({search: '', })
+  // const [newSearch, setNewSearch ] = useState({search: '', })
   
   
   // get token from localStorage and decode it.
@@ -36,7 +36,18 @@ function Home() {
   // use the useAxios Fn to get, update and post data to backend
   const axios = useAxios()
   
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
+
+  useEffect(() => {
+    try {
+      axios.get(`${baseURL}/auth-api/get-users/`).then((res) => {
+        setUsers(res?.data)
+        // console.log(res.data);
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
 
   useEffect(() => {
     try {
@@ -53,7 +64,7 @@ function Home() {
   console.log(messages)
   
   
-  return !user ? <LandingPage /> : (
+  return (
     <>
       <div className="flex h-screen">
         {/* Left Sidebar */}
@@ -81,6 +92,9 @@ function Home() {
               </div>
               <nav className="overflow-y-auto">
                 <ul className="py-2">
+                  {
+                    messages.length === 0 && <li className="mt-2 text-left pl-2">No messages, as of now...</li>
+                  }
 
                   {messages?.map((message) => {
                     return ( 
@@ -487,7 +501,6 @@ function Home() {
           <p>Additional content goes here.</p>
         </aside>
       </div>
-
     </>
   )
 }
