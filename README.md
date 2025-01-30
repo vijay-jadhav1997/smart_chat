@@ -1,5 +1,7 @@
 # SmartChatBot
 
+## Currently working on this project.
+
 >  💡 **Upon successful completion and testing, we will deploy this application.**
 ---
 SmartChatBot is a **real-time chat application** that allows users to **register, log in, start conversations with other registered users, and customize their profiles**. It is built using modern web technologies, ensuring **fast performance and smooth real-time communication**.
