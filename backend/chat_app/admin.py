@@ -6,4 +6,4 @@ from .models import Message
 @admin.register(Message)
 class MessageModel(admin.ModelAdmin):
   list_editable = ['is_read',]
-  list_display = ['id', 'user', 'sender', 'reciever', 'is_read', 'message']
+  list_display = ['id', 'sender', 'receiver', 'is_read', 'message']

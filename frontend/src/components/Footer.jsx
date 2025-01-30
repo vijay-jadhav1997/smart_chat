@@ -9,7 +9,7 @@ function Footer() {
             {/* <img className="w-auto mx-auto h-7" src="https://cdn.rareblocks.xyz/collection/celebration/images/logo-alt-2.svg" alt="" /> */}
             <h4 className="mx-auto px-4 py-1 bg-slate-700/90 text-white w-max rounded-full text-2xl font-bold">SmartChatBot</h4>
 
-            <p className="mt-5 text-sm xl:ml-6 xl:mt-0">© Copyright 2025 SmartChatBot</p>
+            <p className="mt-5 text-sm xl:ml-6 xl:mt-0">© Copyright {new Date().getFullYear()} SmartChatBot</p>
           </div>
 
           <div className="items-center mt-6 xl:mt-0 xl:flex xl:justify-end xl:space-x-8">

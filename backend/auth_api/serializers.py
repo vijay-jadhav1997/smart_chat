@@ -12,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     fields = ['id', 'username', 'email']
 
 
+# Custom TokenObtainPairSerializer:
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
   @classmethod
   def get_token(cls, user):
@@ -19,10 +20,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     token['username'] = user.username
     token['email'] = user.email
-    token['full_name'] = user.userprofile.full_name
     token['dp_image'] = str(user.userprofile.dp_image)
     token['bio'] = user.userprofile.bio
     token['mobile_number'] = user.userprofile.mobile_number
+    token['gender'] = user.userprofile.gender
+    token['address'] = user.userprofile.address
+    token['birth_date'] = user.userprofile.birth_date
 
     return token
 
@@ -62,16 +65,36 @@ class UserLoginSerializer(serializers.Serializer):
 
 # User Profile serializer
 class UserProfileSerializer(serializers.ModelSerializer):
-
   class Meta:
     model = UserProfile
-    fields = [ 'id',  'user',  'full_name', 'dp_image', 'bio', 'mobile_number']
+    fields = [ 'id',  'user', 'dp_image', 'bio', 'mobile_number', 'gender', 'address', 'birth_date']
+    depth = 3
   
-  def __init__(self, *args, **kwargs):
-    super(UserProfileSerializer, self).__init__(*args, **kwargs)
+  # def __init__(self, *args, **kwargs):
+  #   super(UserProfileSerializer, self).__init__(*args, **kwargs)
+  #   request = self.context.get('request')
+  #   if request and request.method == 'POST':
+  #     self.Meta.depth = 0
+  #   else:
+  #     self.Meta.depth = 3
+
+
+  user = serializers.PrimaryKeyRelatedField(read_only=True)  # Prevent modifying the user field
+
+  def to_representation(self, instance):
+    """Dynamically adjust depth based on request method."""
     request = self.context.get('request')
     if request and request.method == 'POST':
-      self.Meta.depth = 0
-    else:
-      self.Meta.depth = 3
+      self.Meta.depth = 0  # Shallow serialization for POST requests
+    return super().to_representation(instance)
+  
+
+  def validate_mobile_number(self, value):
+    """Ensure mobile number contains only digits and is of valid length."""
+    if value and not value.isdigit():
+      raise serializers.ValidationError("Mobile number should contain only digits.")
+
+    if value and not (10 <= len(value) <= 15):
+      raise serializers.ValidationError("Mobile number should be between 10 to 15 digits.")
+    return value
 

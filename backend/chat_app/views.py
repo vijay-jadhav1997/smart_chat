@@ -20,13 +20,13 @@ def my_inbox(request, user_id):
   messages = Message.objects.filter(
     id__in=Subquery(
       User.objects.filter(
-        Q(sender__reciever=user_id) |
-        Q(reciever__sender=user_id)
+        Q(sender__receiver=user_id) |
+        Q(receiver__sender=user_id)
       ).distinct().annotate(
         last_msg=Subquery(
           Message.objects.filter(
-            Q(sender=OuterRef('id'), reciever=user_id) |
-            Q(reciever=OuterRef('id'), sender=user_id)
+            Q(sender=OuterRef('id'), receiver=user_id) |
+            Q(receiver=OuterRef('id'), sender=user_id)
           ).order_by('-id')[:1].values_list('id', flat=True)
         )
       ).values_list('last_msg', flat=True).order_by("-id")
@@ -35,15 +35,15 @@ def my_inbox(request, user_id):
 
   serializer = MessageSerializer(messages, many=True)
   # print(serializer.data)
-  return Response(serializer.data)
+  return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-# to get messages related to sender and reciever
+# to get messages related to sender and receiver
 @api_view(['GET'])
-def get_messages(request, sender_id, reciever_id):
+def get_messages(request, sender_id, receiver_id):
   messages = Message.objects.filter(
-    sender__in=[sender_id, reciever_id], 
-    reciever__in=[sender_id, reciever_id]
+    sender__in=[sender_id, receiver_id], 
+    receiver__in=[sender_id, receiver_id]
   )
   serializer = MessageSerializer(messages, many=True)
   return Response(serializer.data)

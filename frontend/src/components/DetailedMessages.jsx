@@ -98,10 +98,10 @@ function DetailedMessages() {
     e.preventDefault()
 
     const formData = new FormData()
-    // Object.assign(formData, {'message': newMessage, 'user': user_id, 'sender': user_id, 'reciever': useParamsObj.id, 'is_read': false})
-    formData.append('user', user_id)
+    // Object.assign(formData, {'message': newMessage, 'user': user_id, 'sender': user_id, 'receiver': useParamsObj.id, 'is_read': false})
+    // formData.append('user', user_id)
     formData.append('sender', user_id)
-    formData.append('reciever', useParamsObj.id)
+    formData.append('receiver', useParamsObj.id)
     formData.append('message', newMessage || 'Jay Hari')
     formData.append('is_read', false)
     
@@ -154,7 +154,7 @@ function DetailedMessages() {
                   {messages?.map((message) => {
                     return ( 
                       <Link 
-                        to={`/detailed-messages/${message?.sender?.id === user_id ? message.reciever.id : message?.sender?.id}/`}
+                        to={`/detailed-messages/${message?.sender?.id === user_id ? message.receiver.id : message?.sender?.id}/`}
                         key={message?.id}
                         className="py-2 px-1 rounded-md hover:bg-green-300 my-1 flex items-center"
                       >

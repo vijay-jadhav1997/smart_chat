@@ -13,6 +13,7 @@ import { IoCheckmarkDoneOutline } from "react-icons/io5";
 
 function HomePage() {
   const [isLeftSidebarClosed, setIsLeftSidebarClosed] = useState(true)
+  const [isRightSidebarClosed, setIsRightSidebarClosed] = useState(true)
   const [message, setMessage] = useState([])
   const [messages, setMessages] = useState([])
 
@@ -122,7 +123,7 @@ function HomePage() {
   
   return (
    <>
-      <div className="flex flex-col md:flex-row h-screen overflow-auto border">
+      <div className="flex flex-col md:flex-row min-h-screen md:min-h-0 md:h-screen overflow-auto border">
         {/* Left Sidebar */}
         <aside
           className={`w-full mb-2 md:mb-0 rounded-sm transition-all duration-300 bg-blue-200  md:h-full ${
@@ -139,14 +140,14 @@ function HomePage() {
           {!isLeftSidebarClosed && (
             <>
 
-              <div className="w-full">
+              <div className="w-full pr-2">
                 <input
                   type="text"
-                  className="my-2 p-1 mx-auto focus:outline outline-blue-500 rounded-lg"
+                  className="mb-2 w-full p-1 mx-auto focus:outline outline-blue-500 rounded-lg"
                   placeholder="Search users..."
                 />
               </div>
-              <p className='text-left pl-2 text-green-700 font-medium'>All users, you can chat with them...</p>
+              <p className='text-left pl-2 text-green-700 font-medium'>All users, select and initiate chat.</p>
               <nav className="overflow-y-auto">
                 <ul className="py-2 flex flex-wrap md:flex-col justify-between px-2 md:px-0 gap-x-2 gap-y-4 md:gap-y-0">
 
@@ -339,30 +340,30 @@ function HomePage() {
 
 
         {/* Right Sidebar */}
-        <aside className="bg-teal-100 mt-2 md:w-64 p-4 md:hidden lg:block">
+        {/* <aside className="mt-2 "> */}
           <aside
-            className={`w-full mb-2 md:mb-0 rounded-sm transition-all duration-300 bg-blue-200  md:h-full ${
-              isLeftSidebarClosed ? "md:w-16 h-[60px]" : "md:w-64 h-[300px]"
+            className={`w-full mb-2 md:mb-0 md:w-64 p-4 md:hidden lg:block rounded-sm transition-all duration-300 bg-teal-100 md:h-full ${
+              isRightSidebarClosed ? "md:w-16 h-[60px]" : "md:w-64 h-[300px]"
             } flex flex-col py-4 pl-2`}
             style={{scrollbarWidth: 'thin'}}
           >
             <button
-              onClick={() => setIsLeftSidebarClosed(!isLeftSidebarClosed)}
+              onClick={() => setIsRightSidebarClosed(!isRightSidebarClosed)}
               className="mb-4 mr-2 bg-blue-500 text-lg text-white rounded p-2"
             >
-              {isLeftSidebarClosed ? <GoSidebarCollapse className={`rotate-90 lg:rotate-0`} /> : <GoSidebarExpand className={`rotate-90 lg:rotate-0`} />}
+              {isRightSidebarClosed ? <GoSidebarCollapse className={`rotate-90 lg:rotate-0`} /> : <GoSidebarExpand className={`rotate-90 lg:rotate-0`} />}
             </button>
-            {!isLeftSidebarClosed && (
+            {!isRightSidebarClosed && (
               <>
 
-                <div className="w-full">
+                {/* <div className="w-full">
                   <input
                     type="text"
                     className="my-2 p-1 mx-auto focus:outline outline-blue-500 rounded-lg"
                     placeholder="Search users..."
                   />
-                </div>
-                <p className='text-left pl-2 text-green-700 font-medium text-lg'>Recent messages...</p>
+                </div> */}
+                <p className='text-left pl-2 text-green-700 font-medium'>Recent messages...</p>
                 <nav className="overflow-y-auto">
                   <ul className="py-2 flex flex-wrap md:flex-col justify-between px-2 md:px-0 gap-x-2 gap-y-4 md:gap-y-0">
 
@@ -399,7 +400,7 @@ function HomePage() {
 
             )}
           </aside>
-        </aside>
+        {/* </aside> */}
       </div>
 
     </>
